@@ -69,7 +69,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  infra-security:
+  security-scan:
     runs-on: ubuntu-latest
 
     steps:
