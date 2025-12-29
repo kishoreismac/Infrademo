@@ -127,17 +127,48 @@ jobs:
     # ------------------------
     # tfsec → SARIF
     # ------------------------
-    - name: tfsec scan
-      continue-on-error: true
-      uses: aquasecurity/tfsec-action@v1.0.3
-      with:
-        format: sarif
-        output: tfsec.sarif
+   
+   # ------------------------
+# Install tfsec
+# ------------------------
+    - name: Install tfsec
+      run: |
+        curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
 
+    # ------------------------
+    # Run tfsec (non-blocking)
+    # ------------------------
+    - name: Run tfsec
+      continue-on-error: true
+      run: |
+        mkdir -p reports
+        tfsec . \
+          --format sarif \
+          --out reports/tfsec.sarif || true
+
+        echo "tfsec output:"
+        ls -l reports
+
+    # ------------------------
+    # Upload tfsec SARIF
+    # ------------------------
     - name: Upload tfsec results
       uses: github/codeql-action/upload-sarif@v3
       with:
-        sarif_file: tfsec.sarif
+        sarif_file: reports/tfsec.sarif
+
+   
+    # - name: tfsec scan
+    #   continue-on-error: true
+    #   uses: aquasecurity/tfsec-action@v1.0.3
+    #   with:
+    #     format: sarif
+    #     output: tfsec.sarif
+
+    # - name: Upload tfsec results
+    #   uses: github/codeql-action/upload-sarif@v3
+    #   with:
+    #     sarif_file: tfsec.sarif
 
     # ------------------------
 # # tfsec (Non-blocking + SARIF)
