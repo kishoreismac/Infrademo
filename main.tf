@@ -31,7 +31,7 @@ module "storage" {
 }
 
 module "log_analytics" {
-  source              = "./Modules/loganylatics"
+  source              = "./modules/loganylatics"
   name                = var.log_name
   location            = var.location
   resource_group_name = var.rg_name
@@ -39,7 +39,7 @@ module "log_analytics" {
 }
 
 module "app_insights" {
-  source              = "./Modules/app_insights"
+  source              = "./modules/app_insights"
   name                = var.appi_name
   location            = var.location
   resource_group_name = module.rg.resource_group_name
@@ -51,7 +51,7 @@ data "azurerm_client_config" "current" {}
 
 
 module "key_vault" {
-  source              = "./Modules/key_vault"
+  source              = "./modules/key_vault"
   name                = var.kv_name
   location            = var.location
   resource_group_name = module.rg.resource_group_name
@@ -60,7 +60,7 @@ module "key_vault" {
 }
 
 module "app_service" {
-  source              = "./Modules/app_service"
+  source              = "./modules/app_service"
   location            = var.location
   resource_group_name = module.rg.resource_group_name
   
