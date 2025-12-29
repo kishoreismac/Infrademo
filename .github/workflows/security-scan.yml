@@ -2,7 +2,7 @@ name: IaC & Secrets Security Scan
 
 on:
   push:
-    branches: [ "main","feature/infra" ]
+    branches: [ "main","develop" ]
   pull_request:
     branches: [ "main" ]
 
