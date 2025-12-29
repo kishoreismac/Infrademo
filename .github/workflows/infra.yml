@@ -27,12 +27,15 @@ jobs:
       with:
         terraform_version: ${{ env.TF_VERSION }}
 
-    # - name: Azure Login using OIDC
-    #   uses: azure/login@v2
-    #   with:
-    #     client-id: ${{ secrets.CLIENT_ID }}
-    #     tenant-id: ${{ secrets.TENENT_ID }}
-    #     subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+    - name: Azure Login using OIDC
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.CLIENT_ID }}
+        tenant-id: ${{ secrets.TENENT_ID }}
+        subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
 
 
     # - name: Get secrets from Azure Key Vault
@@ -46,12 +49,12 @@ jobs:
     #       subscription-id1
 
 
-    # - name: Export Terraform Azure OIDC vars
-    #   run: |
-    #     echo "ARM_USE_OIDC=true" >> $GITHUB_ENV
-    #     echo "ARM_CLIENT_ID=${{ secrets.CLIENT_ID }}" >> $GITHUB_ENV
-    #     echo "ARM_TENANT_ID=${{ secrets.TENENT_ID }}" >> $GITHUB_ENV
-    #     echo "ARM_SUBSCRIPTION_ID=${{ secrets.SUBSCRIPTION_ID }}" >> $GITHUB_ENV
+    - name: Export Terraform Azure OIDC vars
+      run: |
+        echo "ARM_USE_OIDC=true" >> $GITHUB_ENV
+        echo "ARM_CLIENT_ID=${{ secrets.CLIENT_ID }}" >> $GITHUB_ENV
+        echo "ARM_TENANT_ID=${{ secrets.TENENT_ID }}" >> $GITHUB_ENV
+        echo "ARM_SUBSCRIPTION_ID=${{ secrets.SUBSCRIPTION_ID }}" >> $GITHUB_ENV
 
     # - name: Export Terraform ARM variables
     #   run: |
