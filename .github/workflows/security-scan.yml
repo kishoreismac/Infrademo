@@ -210,29 +210,29 @@ jobs:
     #   with:
     #     sarif_file: checkov.sarif
 
-    - name: Run Checkov
-      uses: bridgecrewio/checkov-action@v12
-      with:
-        directory: .
-        framework: terraform
-        output: sarif
-        soft_fail: true
-
-    - name: Upload Checkov results
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: results.sarif
-
     # - name: Run Checkov
-    #   continue-on-error: true
-    #   run: |
-    #     mkdir -p reports
-    #     checkov -d . -o sarif --output-file-path reports/checkov.sarif
+    #   uses: bridgecrewio/checkov-action@v12
+    #   with:
+    #     directory: .
+    #     framework: terraform
+    #     output: sarif
+    #     soft_fail: true
 
-    # - name: Upload Checkov SARIF
+    # - name: Upload Checkov results
     #   uses: github/codeql-action/upload-sarif@v3
     #   with:
-    #     sarif_file: reports/checkov.sarif
+    #     sarif_file: results.sarif
+
+    - name: Run Checkov
+      continue-on-error: true
+      run: |
+        mkdir -p reports
+        checkov -d . -o sarif --output-file-path reports/checkov.sarif
+
+    - name: Upload Checkov SARIF
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: reports/checkov.sarif
 
 
     # ------------------------
@@ -252,33 +252,33 @@ jobs:
     #     sarif_file: trivy.sarif
 
   # 4️⃣ TRIVY – Terraform config scan (NO Docker)
-    - name: Run Trivy (Terraform)
-      uses: aquasecurity/trivy-action@0.20.0
-      with:
-        scan-type: config
-        scan-ref: .
-        format: sarif
-        output: trivy.sarif
-        severity: CRITICAL,HIGH
+    # - name: Run Trivy (Terraform)
+    #   uses: aquasecurity/trivy-action@0.20.0
+    #   with:
+    #     scan-type: config
+    #     scan-ref: .
+    #     format: sarif
+    #     output: trivy.sarif
+    #     severity: CRITICAL,HIGH
 
-    - name: Upload Trivy results
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: trivy.sarif
-
-    # - name: Run Trivy
-    #   continue-on-error: true
-    #   run: |
-    #     mkdir -p reports
-    #     trivy config . --format sarif --output reports/trivy.sarif
-
-    # - name: Upload Trivy SARIF
+    # - name: Upload Trivy results
     #   uses: github/codeql-action/upload-sarif@v3
     #   with:
-    #     sarif_file: reports/trivy.sarif
+    #     sarif_file: trivy.sarif
 
-    # - name: List all SARIF files
-    #   run: find . -name "*.sarif"
+    - name: Run Trivy
+      continue-on-error: true
+      run: |
+        mkdir -p reports
+        trivy config . --format sarif --output reports/trivy.sarif
+
+    - name: Upload Trivy SARIF
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: reports/trivy.sarif
+
+    - name: List all SARIF files
+      run: find . -name "*.sarif"
    
 
 
