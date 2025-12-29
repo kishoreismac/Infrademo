@@ -9,3 +9,5 @@ ghp_1234567890abcdefghijklmnopqrstuvwxyz
 
 
 ghp_1234567890abcdefghijklmnopqrstuvwxyz
+
+AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
