@@ -1,10 +1,8 @@
 name: IaC & Secrets Security Scan
 
 on:
-  push:
-    branches: [ "main","develop" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
 
 permissions:
   contents: read
