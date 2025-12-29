@@ -167,17 +167,17 @@ jobs:
 # ------------------------
 # SBOM Generation (CycloneDX)
 # ------------------------
-    - name: Generate SBOM
-      uses: CycloneDX/gh-terraform@v1
-      with:
-        path: .
-        format: json
+    # - name: Generate SBOM
+    #   uses: CycloneDX/gh-terraform@v1
+    #   with:
+    #     path: .
+    #     format: json
 
-    - name: Upload SBOM
-      uses: actions/upload-artifact@v4
-      with:
-        name: terraform-sbom
-        path: bom.json
+    # - name: Upload SBOM
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: terraform-sbom
+    #     path: bom.json
 
 
   # ------------------------
