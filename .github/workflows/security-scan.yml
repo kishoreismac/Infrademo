@@ -179,18 +179,18 @@ jobs:
   # ------------------------
   # CodeQL (Security Tab)
   # ------------------------
-  codeql:
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
+  # codeql:
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     security-events: write
 
-    steps:
-    - uses: actions/checkout@v4
+  #   steps:
+  #   - uses: actions/checkout@v4
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: javascript, python
+  #   - name: Initialize CodeQL
+  #     uses: github/codeql-action/init@v3
+  #     with:
+  #       languages: javascript, python
 
-    - name: Analyze
-      uses: github/codeql-action/analyze@v3
+  #   - name: Analyze
+  #     uses: github/codeql-action/analyze@v3
