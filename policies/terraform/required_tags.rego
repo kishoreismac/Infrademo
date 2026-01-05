@@ -3,13 +3,10 @@ package terraform.tags
 required_tags := {"env", "owner"}
 
 deny[msg] {
-  resource := input.resource_changes[_]
+  module := input.values.root_module
+  resource := module.resources[_]
 
-  # Only check resources being created or updated
-  action := resource.change.actions[_]
-  action == "create" or action == "update"
-
-  tags := resource.change.after.tags
+  tags := resource.values.tags
   missing := required_tags - {k | tags[k]}
 
   count(missing) > 0
