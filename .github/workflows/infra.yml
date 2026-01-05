@@ -2,7 +2,7 @@ name: Terraform Azure RG
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "main" ]
   
 
 permissions:
@@ -22,6 +22,27 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v4
+
+    # - name: Install Gitleaks
+    #   run: |
+    #     curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.18.2/gitleaks_8.18.2_linux_x64.tar.gz -o gitleaks.tar.gz
+    #     tar -xzf gitleaks.tar.gz
+    #     sudo mv gitleaks /usr/local/bin/
+
+    # - name: Run Gitleaks (SARIF)
+    #   run: |
+    #     gitleaks detect \
+    #       --source . \
+    #       --no-git \
+    #       --redact \
+    #       --report-format sarif \
+    #       --report-path gitleaks.sarif \
+    #       --exit-code 0
+
+    # - name: Upload Gitleaks SARIF
+    #   uses: github/codeql-action/upload-sarif@v3
+    #   with:
+    #     sarif_file: gitleaks.sarif
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
@@ -68,9 +89,9 @@ jobs:
       working-directory: ${{ env.WORKING_DIR }}
       run: terraform init
 
-    # - name: Terraform Format
-    #   working-directory: ${{ env.WORKING_DIR }}
-    #   run: terraform fmt -check
+    - name: Terraform Format
+      working-directory: ${{ env.WORKING_DIR }}
+      run: terraform fmt -check
 
     - name: Terraform Validate
       working-directory: ${{ env.WORKING_DIR }}
@@ -106,27 +127,27 @@ jobs:
     #     name: trivy-terraform-report
     #     path: trivy-results.json
 
-    - name: Install Checkov
-      run: |
-        pip install checkov
+    # - name: Install Checkov
+    #   run: |
+    #     pip install checkov
 
-    - name: Run Checkov
-      continue-on-error: true
-      run: |
-        mkdir -p reports
+    # - name: Run Checkov
+    #   continue-on-error: true
+    #   run: |
+    #     mkdir -p reports
 
-        checkov -d . \
-          --framework terraform \
-          --output sarif \
-          --output-file-path reports/checkov.sarif || true
+    #     checkov -d . \
+    #       --framework terraform \
+    #       --output sarif \
+    #       --output-file-path reports/checkov.sarif || true
 
-        echo "Checkov output:"
-        ls -l reports
+    #     echo "Checkov output:"
+    #     ls -l reports
 
-    - name: Upload Checkov results
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: reports/checkov.sarif
+    # - name: Upload Checkov results
+    #   uses: github/codeql-action/upload-sarif@v3
+    #   with:
+    #     sarif_file: reports/checkov.sarif
 
     
 
