@@ -2,10 +2,10 @@ package terraform.tags
 
 required_tags := {"env", "owner"}
 
-deny[msg] if {
+deny contains msg if {
   resource := input.values.root_module.resources[_]
 
-  # Only check resources that support tags
+  # Only check resources that have tags
   tags := resource.values.tags
 
   missing := required_tags - {k | tags[k] != null}
@@ -17,4 +17,3 @@ deny[msg] if {
     [resource.name, resource.type, missing]
   )
 }
-

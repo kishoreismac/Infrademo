@@ -2,7 +2,7 @@ name: Terraform Azure RG
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "develop" ]
   
 
 permissions:
