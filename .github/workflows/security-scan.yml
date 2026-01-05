@@ -1,67 +1,10 @@
-# name: IaC & Secrets Security Scan
-
-# on:
-#   pull_request:
-#     branches: [ "main", "develop" ]
-
-# permissions:
-#   contents: read
-#   security-events: write
-
-# jobs:
-#   security-scan:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       # 1️⃣ Checkout code
-#       - name: Checkout repository
-#         uses: actions/checkout@v4
-
-#       # 2️⃣ GITLEAKS – Secrets scanning
-#       # - name: Run Gitleaks
-#       #   uses: gitleaks/gitleaks-action@v2
-#       #   with:
-#       #     args: detect --source . --report-format sarif --report-path gitleaks.sarif
-
-#       # - name: Upload Gitleaks results
-#       #   uses: github/codeql-action/upload-sarif@v3
-#       #   with:
-#       #     sarif_file: gitleaks.sarif
-
-#       # 3️⃣ CHECKOV – Terraform IaC scan
-#       - name: Run Checkov
-#         uses: bridgecrewio/checkov-action@v12
-#         with:
-#           directory: .
-#           framework: terraform
-#           output: sarif
-#           soft_fail: true
-
-#       - name: Upload Checkov results
-#         uses: github/codeql-action/upload-sarif@v3
-#         with:
-#           sarif_file: results.sarif
-
-#       # 4️⃣ TRIVY – Terraform config scan (NO Docker)
-#       - name: Run Trivy (Terraform)
-#         uses: aquasecurity/trivy-action@0.20.0
-#         with:
-#           scan-type: config
-#           scan-ref: .
-#           format: sarif
-#           output: trivy.sarif
-#           severity: CRITICAL,HIGH
-
-#       - name: Upload Trivy results
-#         uses: github/codeql-action/upload-sarif@v3
-#         with:
-#           sarif_file: trivy.sarif
-
 name: Infra PR Security Pipeline
 
 on:
   pull_request:
     branches: [ main, develop ]
+  # push:
+  #   branches: [ main ]
 
 permissions:
   contents: read
@@ -81,10 +24,6 @@ jobs:
     # ------------------------
     # Secrets
     # ------------------------
-    # - name: Gitleaks Scan
-    #   uses: gitleaks/gitleaks-action@v2
-    #   with:
-    #     fail: true
 
     - name: Install Gitleaks
       run: |
@@ -161,79 +100,10 @@ jobs:
       with:
         sarif_file: reports/tfsec.sarif
 
-   
-    # - name: tfsec scan
-    #   continue-on-error: true
-    #   uses: aquasecurity/tfsec-action@v1.0.3
-    #   with:
-    #     format: sarif
-    #     output: tfsec.sarif
-
-    # - name: Upload tfsec results
-    #   uses: github/codeql-action/upload-sarif@v3
-    #   with:
-    #     sarif_file: tfsec.sarif
-
-    # ------------------------
-# # tfsec (Non-blocking + SARIF)
-# # ------------------------
-#     - name: Run tfsec
-#       continue-on-error: true
-#       run: |
-#         mkdir -p reports
-#         tfsec . \
-#           --format sarif \
-#           --out reports/tfsec.sarif \
-#           --no-color || true
-
-#     - name: Debug - list reports
-#       run: ls -l reports
-
-#     - name: Upload tfsec SARIF
-#       uses: github/codeql-action/upload-sarif@v3
-#       with:
-#         sarif_file: reports/tfsec.sarif
-
 
     # ------------------------
     # Checkov → SARIF
     # ------------------------
-    # - name: Checkov Scan
-    #   continue-on-error: true
-    #   uses: bridgecrewio/checkov-action@v12
-    #   with:
-    #     output_format: sarif
-    #     output_file_path: checkov.sarif
-
-    # - name: Upload Checkov results
-    #   uses: github/codeql-action/upload-sarif@v3
-    #   with:
-    #     sarif_file: checkov.sarif
-
-    # - name: Run Checkov
-    #   uses: bridgecrewio/checkov-action@v12
-    #   with:
-    #     directory: .
-    #     framework: terraform
-    #     output: sarif
-    #     soft_fail: true
-
-    # - name: Upload Checkov results
-    #   uses: github/codeql-action/upload-sarif@v3
-    #   with:
-    #     sarif_file: results.sarif
-
-    # - name: Run Checkov
-    #   continue-on-error: true
-    #   run: |
-    #     mkdir -p reports
-    #     checkov -d . -o sarif --output-file-path reports/checkov.sarif
-
-    # - name: Upload Checkov SARIF
-    #   uses: github/codeql-action/upload-sarif@v3
-    #   with:
-    #     sarif_file: reports/checkov.sarif
-
     - name: Install Checkov
       run: |
         pip install checkov
@@ -263,18 +133,18 @@ jobs:
     # ------------------------
     # Trivy → SARIF
     # ------------------------
-    # - name: Trivy IaC Scan
-    #   continue-on-error: true
-    #   uses: aquasecurity/trivy-action@master
-    #   with:
-    #     scan-type: config
-    #     format: sarif
-    #     output: trivy.sarif
+    - name: Trivy IaC Scan
+      continue-on-error: true
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: config
+        format: sarif
+        output: trivy.sarif
 
-    # - name: Upload Trivy results
-    #   uses: github/codeql-action/upload-sarif@v3
-    #   with:
-    #     sarif_file: trivy.sarif
+    - name: Upload Trivy results
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: trivy.sarif
 
   # 4️⃣ TRIVY – Terraform config scan (NO Docker)
     # - name: Run Trivy (Terraform)
@@ -310,20 +180,40 @@ jobs:
     # ------------------------
     # OPA / Conftest
     # ------------------------
-    # - name: Install Conftest
-    #   run: |
-    #     wget https://github.com/open-policy-agent/conftest/releases/latest/download/conftest_Linux_x86_64.tar.gz
-    #     tar -xzf conftest_Linux_x86_64.tar.gz
-    #     sudo mv conftest /usr/local/bin/
+    - name: Install Conftest
+      run: |
+        CONFTEST_VERSION=0.66.0
+        wget https://github.com/open-policy-agent/conftest/releases/download/v${CONFTEST_VERSION}/conftest_${CONFTEST_VERSION}_Linux_x86_64.tar.gz
+        tar -xzf conftest_${CONFTEST_VERSION}_Linux_x86_64.tar.gz
+        chmod +x conftest
+        sudo mv conftest /usr/local/bin/
+        conftest --version
 
-    # - name: Terraform Plan JSON
-    #   run: |
-    #     terraform plan -out=tfplan
-    #     terraform show -json tfplan > tfplan.json
+    - name: Remove backend for PR scans
+      run: rm -f backend.tf
 
-    # - name: Run OPA Policies
+    - name: Terraform Init (no backend)
+      run: terraform init -backend=false -input=false
+
+
+    - name: Terraform Config to JSON
+      run: terraform show -json > tfconfig.json
+
+    - name: Run OPA Policies
+      run: conftest test tfconfig.json --policy policies/terraform
+    
+    # - name: Run OPA Policies (Conftest → SARIF)
     #   run: |
-    #     conftest test tfplan.json --policy policy/
+    #     mkdir -p reports
+    #     conftest test tfconfig.json --policy policies/terraform --output sarif > reports/conftest.sarif
+    #   continue-on-error: true  # Don't fail the job if policy violations found
+
+    # - name: Upload Conftest SARIF
+    #   uses: github/codeql-action/upload-sarif@v4
+    #   if: always()  # Upload even if previous step had violations
+    #   with:
+    #     sarif_file: reports/conftest.sarif
+    
 
     # ------------------------
     # SBOM
@@ -344,21 +234,4 @@ jobs:
     #     path: bom.json
 
 
-  # ------------------------
-  # CodeQL (Security Tab)
-  # ------------------------
-  # codeql:
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     security-events: write
-
-  #   steps:
-  #   - uses: actions/checkout@v4
-
-  #   - name: Initialize CodeQL
-  #     uses: github/codeql-action/init@v3
-  #     with:
-  #       languages: javascript, python
-
-  #   - name: Analyze
-  #     uses: github/codeql-action/analyze@v3
+ 

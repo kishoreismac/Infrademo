@@ -8,6 +8,7 @@ on:
 permissions:
   id-token: write
   contents: read
+  security-events: write
   
 env:
   TF_VERSION: 1.6.6
@@ -21,6 +22,27 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v4
+
+    # - name: Install Gitleaks
+    #   run: |
+    #     curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.18.2/gitleaks_8.18.2_linux_x64.tar.gz -o gitleaks.tar.gz
+    #     tar -xzf gitleaks.tar.gz
+    #     sudo mv gitleaks /usr/local/bin/
+
+    # - name: Run Gitleaks (SARIF)
+    #   run: |
+    #     gitleaks detect \
+    #       --source . \
+    #       --no-git \
+    #       --redact \
+    #       --report-format sarif \
+    #       --report-path gitleaks.sarif \
+    #       --exit-code 0
+
+    # - name: Upload Gitleaks SARIF
+    #   uses: github/codeql-action/upload-sarif@v3
+    #   with:
+    #     sarif_file: gitleaks.sarif
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
@@ -67,20 +89,20 @@ jobs:
       working-directory: ${{ env.WORKING_DIR }}
       run: terraform init
 
-    # - name: Terraform Format
-    #   working-directory: ${{ env.WORKING_DIR }}
-    #   run: terraform fmt -check
+    - name: Terraform Format
+      working-directory: ${{ env.WORKING_DIR }}
+      run: terraform fmt -check -recursive
 
     - name: Terraform Validate
       working-directory: ${{ env.WORKING_DIR }}
       run: terraform validate
 
-    # # 🔐 tfsec Security Scan
-    # - name: Run tfsec
-    #   uses: aquasecurity/tfsec-action@v1.0.3
-    #   with:
-    #     working_directory: ${{ env.WORKING_DIR }}
-    #     soft_fail: false
+    # 🔐 tfsec Security Scan
+    - name: Run tfsec
+      uses: aquasecurity/tfsec-action@v1.0.3
+      with:
+        working_directory: ${{ env.WORKING_DIR }}
+        soft_fail: false
 
     # - name: Run Trivy IaC Scan
     #   uses: aquasecurity/trivy-action@0.20.0
@@ -104,6 +126,28 @@ jobs:
     #   with:
     #     name: trivy-terraform-report
     #     path: trivy-results.json
+
+    # - name: Install Checkov
+    #   run: |
+    #     pip install checkov
+
+    # - name: Run Checkov
+    #   continue-on-error: true
+    #   run: |
+    #     mkdir -p reports
+
+    #     checkov -d . \
+    #       --framework terraform \
+    #       --output sarif \
+    #       --output-file-path reports/checkov.sarif || true
+
+    #     echo "Checkov output:"
+    #     ls -l reports
+
+    # - name: Upload Checkov results
+    #   uses: github/codeql-action/upload-sarif@v3
+    #   with:
+    #     sarif_file: reports/checkov.sarif
 
     
 

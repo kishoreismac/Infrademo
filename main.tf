@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     azurerm = {
-      source = "hashicorp/azurerm"
+      source  = "hashicorp/azurerm"
       version = "4.56.0"
     }
   }
@@ -9,7 +9,7 @@ terraform {
 
 provider "azurerm" {
   features {
-    
+
   }
   use_oidc = true
 
@@ -31,7 +31,7 @@ module "log_analytics" {
   name                = var.log_name
   location            = var.location
   resource_group_name = var.rg_name
- 
+
 }
 
 module "app_insights" {
@@ -40,7 +40,7 @@ module "app_insights" {
   location            = var.location
   resource_group_name = module.rg.resource_group_name
   workspace_id        = module.log_analytics.id
-  
+
 }
 
 data "azurerm_client_config" "current" {}
@@ -52,14 +52,14 @@ module "key_vault" {
   location            = var.location
   resource_group_name = module.rg.resource_group_name
   tenant_id           = data.azurerm_client_config.current.tenant_id
-  
+
 }
 
 module "app_service" {
   source              = "./modules/app_service"
   location            = var.location
   resource_group_name = module.rg.resource_group_name
-  
+
 
   app_service_plan_name = var.asp_name
   web_app_name          = var.web_name
