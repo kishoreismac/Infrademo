@@ -6,39 +6,41 @@ required_tags := {"env", "owner"}
 # Entry point
 ########################################
 deny contains msg if {
-  res := all_resources[_]
-  missing := missing_tags(res)
+  r := all_resources[_]
+  missing := missing_tags(r)
   count(missing) > 0
-  msg := format_msg(res, missing)
+  msg := format_msg(r, missing)
 }
 
 ########################################
-# Recursive resource discovery
+# Collect ALL resources (recursive)
 ########################################
-all_resources contains res if {
-  walk_module(input.values.root_module, res)
+all_resources contains r if {
+  r := input.values.root_module.resources[_]
 }
 
-walk_module(module, res) if {
-  res := module.resources[_]
+all_resources contains r if {
+  child := input.values.root_module.child_modules[_]
+  r := child.resources[_]
 }
 
-walk_module(module, res) if {
-  child := module.child_modules[_]
-  walk_module(child, res)
+all_resources contains r if {
+  child := input.values.root_module.child_modules[_]
+  grandchild := child.child_modules[_]
+  r := grandchild.resources[_]
 }
 
 ########################################
 # Helpers
 ########################################
-missing_tags(res) = missing if {
-  tags := res.values.tags
+missing_tags(r) = missing if {
+  tags := r.values.tags
   missing := required_tags - {k | tags[k] != null}
 }
 
-format_msg(res, missing) = msg if {
+format_msg(r, missing) = msg if {
   msg := sprintf(
     "Resource '%s' (%s) is missing required tags: %v",
-    [res.name, res.type, missing]
+    [r.name, r.type, missing]
   )
 }
