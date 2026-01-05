@@ -200,8 +200,7 @@ jobs:
       run: terraform show -json > tfconfig.json
 
     - name: Run OPA Policies
-      run: |
-        conftest test tfplan.json --policy policies/terraform
+      run: conftest test tfconfig.json --policy policies/terraform
 
     # ------------------------
     # SBOM
