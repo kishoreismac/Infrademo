@@ -2,7 +2,9 @@ package main
 
 required_tags := {"env", "owner"}
 
-# Entry point: iterate all resources recursively
+########################################
+# Entry point
+########################################
 deny contains msg if {
   resource := all_resources[_]
   missing := missing_tags(resource)
@@ -10,25 +12,25 @@ deny contains msg if {
   msg := format_msg(resource, missing)
 }
 
-# -------------------------
-# Recursive resource walker
-# -------------------------
-all_resources[resource] {
+########################################
+# Recursive resource discovery
+########################################
+all_resources contains resource if {
   walk_module(input.values.root_module, resource)
 }
 
-walk_module(module, resource) {
+walk_module(module, resource) if {
   resource := module.resources[_]
 }
 
-walk_module(module, resource) {
+walk_module(module, resource) if {
   child := module.child_modules[_]
   walk_module(child, resource)
 }
 
-# -------------------------
+########################################
 # Helpers
-# -------------------------
+########################################
 missing_tags(resource) = missing if {
   tags := resource.values.tags
   missing := required_tags - {k | tags[k] != null}
