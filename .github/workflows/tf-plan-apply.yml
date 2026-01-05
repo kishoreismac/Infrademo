@@ -20,6 +20,8 @@ env:
   ARM_CLIENT_ID: "${{ secrets.CLIENT_ID }}"
   ARM_SUBSCRIPTION_ID: "${{ secrets.SUBSCRIPTION_ID }}"
   ARM_TENANT_ID: "${{ secrets.TENANT_ID }}"
+  TF_VERSION: 1.6.6
+  WORKING_DIR: .
 
 jobs:
   terraform-plan:
@@ -36,11 +38,23 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    # Install the latest version of the Terraform CLI
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
       with:
-        terraform_wrapper: false
+        terraform_version: ${{ env.TF_VERSION }}
+
+    - name: Azure Login using OIDC
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.CLIENT_ID }}
+        tenant-id: ${{ secrets.TENENT_ID }}
+        subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+
+    # # Install the latest version of the Terraform CLI
+    # - name: Setup Terraform
+    #   uses: hashicorp/setup-terraform@v3
+    #   with:
+    #     terraform_wrapper: false
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
