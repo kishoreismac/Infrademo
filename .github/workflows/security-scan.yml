@@ -182,9 +182,13 @@ jobs:
     # ------------------------
     - name: Install Conftest
       run: |
-        wget https://github.com/open-policy-agent/conftest/releases/latest/download/conftest_Linux_amd64.tar.gz
-        tar -xzf conftest_Linux_amd64.tar.gz
+        CONFTEST_VERSION=0.66.0
+        wget https://github.com/open-policy-agent/conftest/releases/download/v${CONFTEST_VERSION}/conftest_${CONFTEST_VERSION}_Linux_x86_64.tar.gz
+        tar -xzf conftest_${CONFTEST_VERSION}_Linux_x86_64.tar.gz
+        chmod +x conftest
         sudo mv conftest /usr/local/bin/
+        conftest --version
+
 
     - name: Terraform Plan JSON
       run: |
