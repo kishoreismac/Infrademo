@@ -75,35 +75,35 @@ jobs:
       working-directory: ${{ env.WORKING_DIR }}
       run: terraform validate
 
-    # # 🔐 tfsec Security Scan
-    # - name: Run tfsec
-    #   uses: aquasecurity/tfsec-action@v1.0.3
-    #   with:
-    #     working_directory: ${{ env.WORKING_DIR }}
-    #     soft_fail: false
+    # 🔐 tfsec Security Scan
+    - name: Run tfsec
+      uses: aquasecurity/tfsec-action@v1.0.3
+      with:
+        working_directory: ${{ env.WORKING_DIR }}
+        soft_fail: false
 
-    # - name: Run Trivy IaC Scan
-    #   uses: aquasecurity/trivy-action@0.20.0
-    #   with:
-    #     scan-type: config
-    #     scan-ref: ${{ env.WORKING_DIR }}
-    #     severity: HIGH,CRITICAL
-    #     exit-code: 1
-    #     format: table
-    # - name: Run Trivy IaC Scan (JSON)
-    #   uses: aquasecurity/trivy-action@0.20.0
-    #   with:
-    #     scan-type: config
-    #     scan-ref: ${{ env.WORKING_DIR }}
-    #     format: json
-    #     output: trivy-results.json
-    #     exit-code: 0
+    - name: Run Trivy IaC Scan
+      uses: aquasecurity/trivy-action@0.20.0
+      with:
+        scan-type: config
+        scan-ref: ${{ env.WORKING_DIR }}
+        severity: HIGH,CRITICAL
+        exit-code: 1
+        format: table
+    - name: Run Trivy IaC Scan (JSON)
+      uses: aquasecurity/trivy-action@0.20.0
+      with:
+        scan-type: config
+        scan-ref: ${{ env.WORKING_DIR }}
+        format: json
+        output: trivy-results.json
+        exit-code: 0
 
-    # - name: Upload Trivy Report
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: trivy-terraform-report
-    #     path: trivy-results.json
+    - name: Upload Trivy Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: trivy-terraform-report
+        path: trivy-results.json
 
     
 
