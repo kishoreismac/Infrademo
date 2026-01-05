@@ -6,7 +6,7 @@ resource "azurerm_service_plan" "plan" {
   os_type  = "Linux"
   sku_name = var.sku_name
 
-  
+
 }
 
 resource "azurerm_linux_web_app" "web" {
@@ -41,5 +41,5 @@ resource "azurerm_linux_web_app" "web" {
     }
   )
 
- 
+
 }
