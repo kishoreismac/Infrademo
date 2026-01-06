@@ -1,4 +1,4 @@
-rg_name  = "rg-terraform-dev"
+rg_name  = "rg-terraform-dev2"
 location = "eastus2"
 nsg_name = "inseccure_nsg"
 
