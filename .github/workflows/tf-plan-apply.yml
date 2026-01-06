@@ -188,6 +188,9 @@ permissions:
 env:
   TF_VERSION: 1.6.6
   WORKING_DIR: .
+  ARM_CLIENT_ID: "${{ secrets.CLIENT_ID }}"
+  ARM_SUBSCRIPTION_ID: "${{ secrets.SUBSCRIPTION_ID }}"
+  ARM_TENANT_ID: "${{ secrets.TENENT_ID }}"
 
 jobs:
   terraform-plan:
@@ -207,13 +210,27 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
-      # ✅ CHANGE 1: Single, clean OIDC login (no duplication)
+      # # ✅ CHANGE 1: Single, clean OIDC login (no duplication)
+      # - name: Azure Login using OIDC
+      #   uses: azure/login@v1
+      #   with:
+      #     client-id: ${{ secrets.CLIENT_ID }}
+      #     tenant-id: ${{ secrets.TENENT_ID }}
+      #     subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+
       - name: Azure Login using OIDC
         uses: azure/login@v1
         with:
           client-id: ${{ secrets.CLIENT_ID }}
           tenant-id: ${{ secrets.TENENT_ID }}
           subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+
+      - name: Set Terraform Environment Variables
+        run: |
+          echo "ARM_CLIENT_ID=${{ secrets.CLIENT_ID }}" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=${{ secrets.SUBSCRIPTION_ID }}" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=${{ secrets.TENENT_ID }}" >> $GITHUB_ENV
+          echo "ARM_USE_OIDC=true" >> $GITHUB_ENV
 
       # ✅ CHANGE 2: Explicitly enable Terraform OIDC support
       - name: Set Terraform Environment Variables
