@@ -260,6 +260,12 @@ jobs:
             exit 1
           fi
 
+      - name: Debug Terraform Plan Output
+        run: |
+          echo "Plan exit code: '${{ steps.tf-plan.outputs.exitcode }}'"
+          echo "Needs output: '${{ needs.terraform-plan.outputs.tfplanExitCode }}'"
+
+
       - name: Publish Terraform Plan
         uses: actions/upload-artifact@v4
         with:
@@ -304,11 +310,17 @@ jobs:
               body: body
             })
 
+  # terraform-apply:
+  #   name: 'Terraform Apply'
+  #   # ✅ CHANGE 4: Output is a STRING, not a number
+  #   if: github.ref == 'refs/heads/main' &&
+  #       needs.terraform-plan.outputs.tfplanExitCode == '2'
   terraform-apply:
     name: 'Terraform Apply'
-    # ✅ CHANGE 4: Output is a STRING, not a number
-    if: github.ref == 'refs/heads/main' &&
-        needs.terraform-plan.outputs.tfplanExitCode == '2'
+    if: |
+      github.event_name == 'push' &&
+      github.ref_name == 'main' 
+
     runs-on: ubuntu-latest
     environment: production
     needs: [terraform-plan]
@@ -329,6 +341,13 @@ jobs:
           tenant-id: ${{ secrets.TENENT_ID }}
           subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
 
+      - name: Export Terraform Azure OIDC vars
+        run: |
+          echo "ARM_USE_OIDC=true" >> $GITHUB_ENV
+          echo "ARM_CLIENT_ID=${{ secrets.CLIENT_ID }}" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=${{ secrets.TENENT_ID }}" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=${{ secrets.SUBSCRIPTION_ID }}" >> $GITHUB_ENV
+
       - name: Terraform Init
         run: terraform init
 
@@ -339,3 +358,6 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
+
+
+      # needs.terraform-plan.outputs.tfplanExitCode == '2'
