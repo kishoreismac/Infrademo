@@ -158,6 +158,12 @@ jobs:
           terraform init -backend=false
           terraform show -json > ../../tfconfig.json
 
+      - name: Remove backend for PR scans
+        run: rm -f backend.tf
+
+      - name: Terraform Init (no backend)
+        run: terraform init -backend=false -input=false
+
       - name: Run OPA Policy Tests
         continue-on-error: true
         run: conftest test tfconfig.json --policy Infrademo/policies/terraform
