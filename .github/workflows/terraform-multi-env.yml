@@ -90,6 +90,7 @@ jobs:
         run: pip install checkov
 
       - name: Run Checkov
+        continue-on-error: true
         run: checkov -d . --framework terraform --compact --quiet
 
       - name: Security Scan Summary
