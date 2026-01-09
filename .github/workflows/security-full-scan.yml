@@ -113,6 +113,8 @@ jobs:
           mkdir -p reports
           checkov -d . \
             --framework terraform \
+            --compact --quiet \
+            --soft-fail \
             --output sarif \
             --output-file-path reports/checkov.sarif || true
 
