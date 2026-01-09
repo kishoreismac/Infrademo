@@ -12,7 +12,7 @@ subscription_id = "d082ec46-cae2-4914-b058-e49b9130f41f"
 
 appi_name = "prod-appi1"
 
-kv_name = "prodkv12345"
+kv_name = "kprodkv123"
 
 asp_name = "prodaspplan"
 
