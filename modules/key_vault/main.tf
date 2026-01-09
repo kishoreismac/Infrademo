@@ -10,6 +10,10 @@ resource "azurerm_key_vault" "this" {
   soft_delete_retention_days    = 14
   enable_rbac_authorization     = true
   public_network_access_enabled = true
+  network_acls {
+    default_action = "Deny"
+    bypass         = "AzureServices"
+ }
 
   tags = var.tags
 
