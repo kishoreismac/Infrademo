@@ -57,10 +57,12 @@ jobs:
             --exit-code 0
 
       - name: Upload Gitleaks SARIF
+        if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: gitleaks.sarif
           category: gitleaks
+        continue-on-error: true
 
       # ------------------------
       # Terraform Validation
@@ -96,10 +98,12 @@ jobs:
             --out reports/tfsec.sarif || true
 
       - name: Upload tfsec results
+        if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: reports/tfsec.sarif
           category: tfsec
+        continue-on-error: true
 
       # ------------------------
       # Checkov Security Scan
@@ -119,10 +123,12 @@ jobs:
             --output-file-path reports/checkov.sarif || true
 
       - name: Upload Checkov results
+        if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: reports/checkov.sarif
           category: checkov
+        continue-on-error: true
 
       # ------------------------
       # Trivy Security Scan
@@ -137,10 +143,12 @@ jobs:
           severity: CRITICAL,HIGH,MEDIUM
 
       - name: Upload Trivy results
+        if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: trivy.sarif
           category: trivy
+        continue-on-error: true
 
       # ------------------------
       # OPA Policy Testing

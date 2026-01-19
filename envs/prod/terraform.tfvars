@@ -1,5 +1,5 @@
 rg_name  = "rg-terraform-prod2"
-location = "eastus2"
+location = "eastus"
 
 tags = {
   environment = "prod"
@@ -18,7 +18,7 @@ asp_name = "prodaspplan"
 
 web_name = "prodwebapp1234"
 
-app_service_sku = "P1v3"
+app_service_sku = "S3"
 
 
 
